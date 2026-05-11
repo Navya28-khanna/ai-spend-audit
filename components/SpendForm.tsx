@@ -22,7 +22,7 @@ export default function SpendForm() {
 
     setResult(auditResult)
 
-    const { error } = await supabase
+    const { data: insertedAudit, error } = await supabase
       .from("audits")
       .insert([
         {
@@ -33,11 +33,14 @@ export default function SpendForm() {
           recommendation: auditResult.recommendation,
         },
       ])
+      .select()
 
     if (error) {
       console.log(error)
     } else {
       setSaved(true)
+
+      window.location.href = `/audit/${insertedAudit?.[0]?.id}`
     }
   }
 
@@ -81,7 +84,11 @@ export default function SpendForm() {
       {result && (
         <div className="mt-8 rounded-2xl bg-white text-black p-6 shadow-xl">
 
-          <h2 className="text-3xl font-bold">
+          <p className="text-sm uppercase tracking-wide text-gray-500">
+            Audit Report
+          </p>
+
+          <h2 className="text-3xl font-bold mt-2">
             Potential Savings: ${result.savings}
           </h2>
 
